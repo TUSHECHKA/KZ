@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космический защитник - Настройка управления</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 114, 255, 0.3);
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .game-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        #gameCanvas {
+            background: #000;
+            border-radius: 10px;
+            width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .controls-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-section {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00c6ff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
+        }
+        
+        .control-option {
+            background: rgba(0, 20, 40, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .control-option:hover {
+            background: rgba(0, 40, 80, 0.7);
+        }
+        
+        .control-option.active {
+            border-color: #00c6ff;
+            background: rgba(0, 40, 80, 0.8);
+        }
+        
+        .control-option h3 {
+            margin-bottom: 8px;
+            color: #00c6ff;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .control-btn.active {
+            background: #00c6ff;
+            color: #000;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00c6ff;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .current-controls {
+            background: rgba(0, 20, 40, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 5px;
+            font-family: monospace;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>КОСМИЧЕСКИЙ ЗАЩИТНИК</h1>
+            <p>Настройте управление под свои предпочтения</p>
+        </header>
+        
+        <div class="content">
+            <div class="game-container">
+                <canvas id="gameCanvas" width="600" height="400"></canvas>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="score">0</div>
+                        <div class="stat-label">ОЧКИ</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="lives">3</div>
+                        <div class="stat-label">ЖИЗНИ</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="level">1</div>
+                        <div class="stat-label">УРОВЕНЬ</div>
+                    </div>
+                </div>
+                <button id="startBtn">Начать игру</button>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="control-section">
+                    <h2>Выберите тип управления</h2>
+                    
+                    <div class="control-option active" id="option-keys">
+                        <h3>Клавиши клавиатуры</h3>
+                        <p>Используйте клавиши для движения влево и вправо</p>
+                        <div class="buttons-container">
+                            <div class="control-btn active" id="btn-arrows">Стрелки ← →</div>
+                            <div class="control-btn" id="btn-ad">Клавиши A D</div>
+                            <div class="control-btn" id="btn-qe">Клавиши Q E</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-option" id="option-mouse">
+                        <h3>Мышь</h3>
+                        <p>Двигайте мышью по экрану для управления кораблем</p>
+                    </div>
+                    
+                    <div class="control-option" id="option-touch">
+                        <h3>Сенсорное управление</h3>
+                        <p>Используйте кнопки на экране для мобильных устройств</p>
+                        <div class="buttons-container" id="touch-buttons" style="display: none;">
+                            <div class="control-btn" id="btn-left">← ВЛЕВО</div>
+                            <div class="control-btn" id="btn-right">ВПРАВО →</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-option" id="option-accelerometer">
+                        <h3>Акселерометр</h3>
+                        <p>Наклоняйте устройство для управления (только для мобильных)</p>
+                    </div>
+                </div>
+                
+                <div class="current-controls">
+                    <h2>Текущее управление</h2>
+                    <p id="current-controls-text">Стрелки влево/вправо для движения, Пробел для стрельбы</p>
+                    <p><span class="key" id="left-key">←</span> Движение влево</p>
+                    <p><span class="key" id="right-key">→</span> Движение вправо</p>
+                    <p><span class="key">ПРОБЕЛ</span> Огонь</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Космический защитник | Настройка управления</p>
+        </footer>
+    </div>
+
+    <script>
+        // Инициализация игры
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
+        const levelElement = document.getElementById('level');
+        const startBtn = document.getElementById('startBtn');
+
+        // Элементы управления
+        const controlOptions = document.querySelectorAll('.control-option');
+        const keyButtons = document.querySelectorAll('.control-btn');
+        const leftKeyElement = document.getElementById('left-key');
+        const rightKeyElement = document.getElementById('right-key');
+        const currentControlsText = document.getElementById('current-controls-text');
+        const touchButtons = document.getElementById('touch-buttons');
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+
+        // Настройки управления
+        let controlType = 'keys-arrows'; // keys-arrows, keys-ad, keys-qe, mouse, touch, accelerometer
+        let leftKey = 'ArrowLeft';
+        let rightKey = 'ArrowRight';
+        let mouseX = 0;
+        let touchLeft = false;
+        let touchRight = false;
+        let accelerometerEnabled = false;
+
+        // Игровые переменные
+        let score = 0;
+        let lives = 3;
+        let level = 1;
+        let gameRunning = false;
+        
+        // Игровые объекты
+        const player = {
+            x: canvas.width / 2 - 25,
+            y: canvas.height - 60,
+            width: 50,
+            height: 40,
+            speed: 5,
+            color: '#00c6ff'
+        };
+        
+        let bullets = [];
+        let asteroids = [];
+        
+        // Класс для пуль
+        class Bullet {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 4;
+                this.height = 10;
+                this.speed = 7;
+                this.color = '#ffff00';
+            }
+            
+            update() {
+                this.y -= this.speed;
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        }
+        
+        // Класс для астероидов
+        class Asteroid {
+            constructor() {
+                this.size = Math.random() * 30 + 20;
+                this.x = Math.random() * (canvas.width - this.size);
+                this.y = -this.size;
+                this.speed = Math.random() * 2 + 1 + level * 0.5;
+                this.color = '#888888';
+            }
+            
+            update() {
+                this.y += this.speed;
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Функции управления
+        function updateControls() {
+            // Обновляем отображение текущих клавиш
+            switch(controlType) {
+                case 'keys-arrows':
+                    leftKeyElement.textContent = '←';
+                    rightKeyElement.textContent = '→';
+                    currentControlsText.textContent = 'Стрелки влево/вправо для движения, Пробел для стрельбы';
+                    break;
+                case 'keys-ad':
+                    leftKeyElement.textContent = 'A';
+                    rightKeyElement.textContent = 'D';
+                    currentControlsText.textContent = 'Клавиши A/D для движения, Пробел для стрельбы';
+                    break;
+                case 'keys-qe':
+                    leftKeyElement.textContent = 'Q';
+                    rightKeyElement.textContent = 'E';
+                    currentControlsText.textContent = 'Клавиши Q/E для движения, Пробел для стрельбы';
+                    break;
+                case 'mouse':
+                    leftKeyElement.textContent = 'МЫШЬ';
+                    rightKeyElement.textContent = 'МЫШЬ';
+                    currentControlsText.textContent = 'Двигайте мышью для управления, ЛКМ для стрельбы';
+                    break;
+                case 'touch':
+                    leftKeyElement.textContent = '←';
+                    rightKeyElement.textContent = '→';
+                    currentControlsText.textContent = 'Используйте кнопки для управления, тап для стрельбы';
+                    break;
+                case 'accelerometer':
+                    leftKeyElement.textContent = 'НАКЛОН';
+                    rightKeyElement.textContent = 'НАКЛОН';
+                    currentControlsText.textContent = 'Наклоняйте устройство для управления, тап для стрельбы';
+                    break;
+            }
+            
+            // Показываем/скрываем сенсорные кнопки
+            if (controlType === 'touch') {
+                touchButtons.style.display = 'flex';
+            } else {
+                touchButtons.style.display = 'none';
+            }
+            
+            // Включаем/выключаем акселерометр
+            if (controlType === 'accelerometer' && typeof DeviceOrientationEvent !== 'undefined') {
+                enableAccelerometer();
+            } else {
+                disableAccelerometer();
+            }
+        }
+        
+        function enableAccelerometer() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                            accelerometerEnabled = true;
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+                accelerometerEnabled = true;
+            }
+        }
+        
+        function disableAccelerometer() {
+            window.removeEventListener('deviceorientation', handleOrientation);
+            accelerometerEnabled = false;
+        }
+        
+        function handleOrientation(event) {
+            if (controlType !== 'accelerometer' || !gameRunning) return;
+            
+            // Используем данные акселерометра для управления
+            const tilt = event.gamma; // -90 до 90 градусов
+            if (tilt > 10) {
+                // Наклон вправо
+                player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+            } else if (tilt < -10) {
+                // Наклон влево
+                player.x = Math.max(0, player.x - player.speed);
+            }
+        }
+        
+        // Функции игры
+        function startGame() {
+            if (!gameRunning) {
+                gameRunning = true;
+                score = 0;
+                lives = 3;
+                level = 1;
+                bullets = [];
+                asteroids = [];
+                player.x = canvas.width / 2 - 25;
+                updateUI();
+                gameLoop();
+            }
+        }
+        
+        function updateUI() {
+            scoreElement.textContent = score;
+            livesElement.textContent = lives;
+            levelElement.textContent = level;
+        }
+        
+        function spawnAsteroids() {
+            if (Math.random() < 0.02 + level * 0.005) {
+                asteroids.push(new Asteroid());
+            }
+        }
+        
+        function checkCollisions() {
+            // Проверка столкновений пуль с астероидами
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                for (let j = asteroids.length - 1; j >= 0; j--) {
+                    if (bullets[i].x < asteroids[j].x + asteroids[j].size &&
+                        bullets[i].x + bullets[i].width > asteroids[j].x &&
+                        bullets[i].y < asteroids[j].y + asteroids[j].size &&
+                        bullets[i].y + bullets[i].height > asteroids[j].y) {
+                        
+                        score += 50;
+                        bullets.splice(i, 1);
+                        asteroids.splice(j, 1);
+                        break;
+                    }
+                }
+            }
+            
+            // Проверка столкновений игрока с астероидами
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                if (player.x < asteroids[i].x + asteroids[i].size &&
+                    player.x + player.width > asteroids[i].x &&
+                    player.y < asteroids[i].y + asteroids[i].size &&
+                    player.y + player.height > asteroids[i].y) {
+                    
+                    lives--;
+                    asteroids.splice(i, 1);
+                    
+                    if (lives <= 0) {
+                        gameOver();
+                    }
+                }
+            }
+        }
+        
+        function updateLevel() {
+            const newLevel = Math.floor(score / 1000) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+            }
+        }
+        
+        function gameOver() {
+            gameRunning = false;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('ИГРА ОКОНЧЕНА', canvas.width / 2, canvas.height / 2 - 30);
+            ctx.font = '20px Arial';
+            ctx.fillText(`Ваш счет: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+            ctx.fillText('Нажмите "Начать игру" для рестарта', canvas.width / 2, canvas.height / 2 + 40);
+            ctx.textAlign = 'left';
+        }
+        
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            // Рисуем детали корабля
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(player.x + 10, player.y, 5, 10);
+            ctx.fillRect(player.x + player.width - 15, player.y, 5, 10);
+            
+            ctx.fillStyle = '#0072ff';
+            ctx.fillRect(player.x + 15, player.y + 10, player.width - 30, 20);
+        }
+        
+        function drawBackground() {
+            // Рисуем звездное небо
+            ctx.fillStyle = '#000033';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Рисуем звезды
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 100; i++) {
+                const x = (i * 13) % canvas.width;
+                const y = (i * 7) % canvas.height;
+                const size = Math.random() * 1.5;
+                ctx.fillRect(x, y, size, size);
+            }
+            
+            // Рисуем землю внизу
+            ctx.fillStyle = '#1a5c1a';
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+        }
+        
+        function updatePlayerPosition() {
+            // Обновляем позицию игрока в зависимости от типа управления
+            if (controlType === 'mouse' && gameRunning) {
+                // Двигаем корабль к позиции мыши
+                const targetX = mouseX - player.width / 2;
+                if (targetX < player.x) {
+                    player.x = Math.max(0, player.x - player.speed);
+                } else if (targetX > player.x) {
+                    player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+                }
+            } else if (controlType === 'touch' && gameRunning) {
+                // Управление с помощью сенсорных кнопок
+                if (touchLeft) {
+                    player.x = Math.max(0, player.x - player.speed);
+                }
+                if (touchRight) {
+                    player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+                }
+            }
+            // Для акселерометра позиция обновляется в handleOrientation
+            // Для клавиш - в обработчике событий клавиатуры
+        }
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // Очистка canvas
+            drawBackground();
+            
+            // Спавн астероидов
+            spawnAsteroids();
+            
+            // Обновление позиций
+            updatePlayerPosition();
+            bullets.forEach(bullet => bullet.update());
+            asteroids.forEach(asteroid => asteroid.update());
+            
+            // Удаление объектов за пределами экрана
+            bullets = bullets.filter(bullet => bullet.y > 0);
+            asteroids = asteroids.filter(asteroid => asteroid.y < canvas.height);
+            
+            // Проверка столкновений
+            checkCollisions();
+            
+            // Обновление уровня
+            updateLevel();
+            
+            // Отрисовка объектов
+            bullets.forEach(bullet => bullet.draw());
+            asteroids.forEach(asteroid => asteroid.draw());
+            drawPlayer();
+            
+            // Обновление UI
+            updateUI();
+            
+            // Следующий кадр
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Обработчики событий
+        startBtn.addEventListener('click', startGame);
+        
+        // Выбор типа управления
+        controlOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                controlOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                controlType = option.id.replace('option-', '');
+                updateControls();
+            });
+        });
+        
+        // Выбор клавиш для клавиатурного управления
+        keyButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                keyButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                if (btn.id === 'btn-arrows') {
+                    leftKey = 'ArrowLeft';
+                    rightKey = 'ArrowRight';
+                } else if (btn.id === 'btn-ad') {
+                    leftKey = 'KeyA';
+                    rightKey = 'KeyD';
+                } else if (btn.id === 'btn-qe') {
+                    leftKey = 'KeyQ';
+                    rightKey = 'KeyE';
+                }
+            });
+        });
+        
+        // Сенсорное управление
+        btnLeft.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchLeft = true;
+        });
+        
+        btnLeft.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            touchLeft = false;
+        });
+        
+        btnRight.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchRight = true;
+        });
+        
+        btnRight.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            touchRight = false;
+        });
+        
+        // Управление мышью
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+        });
+        
+        canvas.addEventListener('click', (e) => {
+            if (controlType === 'mouse' && gameRunning) {
+                bullets.push(new Bullet(player.x + player.width/2 - 2, player.y));
+            }
+        });
+        
+        // Управление с клавиатуры
+        document.addEventListener('keydown', (e) => {
+            if (!gameRunning) return;
+            
+            // Движение
+            if (controlType.startsWith('keys')) {
+                if (e.code === leftKey) {
+                    player.x = Math.max(0, player.x - player.speed);
+                } else if (e.code === rightKey) {
+                    player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+                }
+            }
+            
+            // Стрельба
+            if (e.code === 'Space' && controlType.startsWith('keys')) {
+                bullets.push(new Bullet(player.x + player.width/2 - 2, player.y));
+            }
+        });
+        
+        // Сенсорная стрельба
+        canvas.addEventListener('touchstart', (e) => {
+            if ((controlType === 'touch' || controlType === 'accelerometer') && gameRunning) {
+                e.preventDefault();
+                bullets.push(new Bullet(player.x + player.width/2 - 2, player.y));
+            }
+        });
+        
+        // Начальная отрисовка
+        updateControls();
+        drawBackground();
+        drawPlayer();
+    </script>
+</body>
+</html>
